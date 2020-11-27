@@ -2,7 +2,7 @@
 
 namespace ImageViewer.Domain
 {
-    internal interface IImageProvider
+    public interface IImageProvider
     {
         BitmapSource UploadedImage { get; }
 
