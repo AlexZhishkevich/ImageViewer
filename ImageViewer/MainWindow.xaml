@@ -39,11 +39,11 @@
 
         <TextBlock Text="{Binding ImageUploadingErrorText}" TextWrapping="Wrap" Foreground="Red" Grid.Column="1" Grid.Row="2" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Left"/>
 
-        <Button Grid.Column="1" Command="{Binding DownloadImageFromWebCommand}" Grid.Row="3" Width="150" Margin="5" Content="Download from server"/>
+        <Button Grid.Column="1" Command="{Binding ProcessImageFromWebCommand}" Grid.Row="3" Width="150" Margin="5" Content="Download from server"/>
 
         <TextBlock Text="{Binding HardDriveImageUploadingErrorMessage}" TextWrapping="Wrap" Foreground="Red" Grid.Column="2" Grid.Row="2" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-        
-        <Button Grid.Column="2" Command="{Binding DownloadImageFromHardDriveCommand}" Grid.Row="3" Width="150" Margin="5" Content="Select from hard drive"/>
+
+        <Button Grid.Column="2" Command="{Binding ProcessImageFromHardDriveCommand}" Grid.Row="3" Width="150" Margin="5" Content="Select from hard drive"/>
 
         <Image Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="3" Margin="0 15 300 15" Source="{Binding Image}"/>
 

@@ -14,9 +14,7 @@ namespace ImageViewer.Domain
             { ".jpeg", ReadJpgImage }
         };
 
-        public BitmapSource UploadedImage { get; private set; }
-
-        public void GetImage(string pathToImage)
+        public BitmapSource GetImage(string pathToImage)
         {
             if (!File.Exists(pathToImage))
                 throw new FileNotFoundException(nameof(pathToImage));
@@ -29,7 +27,7 @@ namespace ImageViewer.Domain
             if (!_imageDecoders.ContainsKey(imageExtension))
                 throw new NotSupportedException(nameof(imageExtension));
 
-            UploadedImage = _imageDecoders[imageExtension].Invoke(pathToImage);
+            return _imageDecoders[imageExtension].Invoke(pathToImage);
         }
 
         private BitmapSource ReadPngImage(string pathToImage)

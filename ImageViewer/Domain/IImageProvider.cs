@@ -4,8 +4,6 @@ namespace ImageViewer.Domain
 {
     public interface IImageProvider
     {
-        BitmapSource UploadedImage { get; }
-
-        void GetImage(string pathToImage);
+        BitmapSource GetImage(string pathToImage);
     }
 }

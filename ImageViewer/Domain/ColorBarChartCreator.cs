@@ -15,19 +15,19 @@ namespace ImageViewer.Domain
         public Bitmap GreenBarChart { get; private set; }
         public Bitmap BlueBarChart { get; private set; }
 
-        public void CalculateImageHistogram(byte[] image, int bitsPerPixel)
+        public void CalculateImageHistogram(byte[] image, int bytesPerPixel)
         {
-            if (image.Length % bitsPerPixel != 0)
-                throw new ArgumentException(nameof(image));
+            if (bytesPerPixel < 3)
+                throw new ArgumentException(nameof(bytesPerPixel));
 
-            if (bitsPerPixel == 0)
-                throw new ArgumentException(nameof(bitsPerPixel));
+            if (image.Length % bytesPerPixel != 0)
+                throw new ArgumentException(nameof(image));
 
             _redBarChartData = new int[256];
             _greenBarChartData = new int[256];
             _blueBarChartData = new int[256];
 
-            for (int index = 0; index < image.Length; index += bitsPerPixel)
+            for (int index = 0; index < image.Length; index += bytesPerPixel)
             {
                 ++_redBarChartData[image[index]];
                 ++_greenBarChartData[image[index + 1]];
