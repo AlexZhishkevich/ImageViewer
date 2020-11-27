@@ -17,16 +17,16 @@ namespace ImageViewer
             HardDriveImageProvider = new HardDriveImageProvider();
         }
 
-        public ICommand DownloadImageFromWebCommand => new DelegateCommandd(DownloadImageByUri);
+        public ICommand ProcessImageFromWebCommand => new DelegateCommandd(ProcessImageFromWeb);
 
-        public ICommand DownloadImageFromHardDriveCommand => new DelegateCommandd(DownloadImageFromHardDrive);
+        public ICommand ProcessImageFromHardDriveCommand => new DelegateCommandd(ProcessImageFromHardDrive);
 
-        public IImageProvider WebImageProvider { get; internal set; }
+        public IImageProvider WebImageProvider { get; set; }
 
-        public IImageProvider HardDriveImageProvider { get; internal set; }
+        public IImageProvider HardDriveImageProvider { get; set; }
 
         #region PathToWebImage property
-        private string _pathToWebImage;
+        private string _pathToWebImage = string.Empty;
 
         public string PathToWebImage
         {
@@ -132,13 +132,13 @@ namespace ImageViewer
         }
         #endregion
 
-        private void DownloadImageByUri()
+        private void ProcessImageFromWeb()
         {
             CleanData();
 
             try
             {
-                WebImageProvider.GetImage(_pathToWebImage);
+                Image = WebImageProvider.GetImage(_pathToWebImage);
             }
             catch(UriFormatException)
             {
@@ -152,9 +152,7 @@ namespace ImageViewer
                 return;
             }
 
-            Image = WebImageProvider.UploadedImage;
-
-            if (Image.Height == 1)
+            if (Image.Height != 1)
             {
                 var bytesPerPixel = (Image.Format.BitsPerPixel + 7) / 8;
                 var imageBytes = new byte[bytesPerPixel * Image.PixelWidth * Image.PixelHeight];
@@ -167,10 +165,14 @@ namespace ImageViewer
                 GreenColorBarChart = barChartCreator.GreenBarChart.ToImageSource();
                 BlueColorBarChart = barChartCreator.BlueBarChart.ToImageSource();
             }
+            else
+            {
+                HistogramShouldBeShawn = false;
+                HistogramCreationErrorMessage = "Can not create histogram. Incorrect image data";
+            }
         }
 
-
-        private void DownloadImageFromHardDrive()
+        private void ProcessImageFromHardDrive()
         {
             CleanData();
 
@@ -187,12 +189,13 @@ namespace ImageViewer
                 {
                     pathToImage = openFileDialog.FileName;
                 }
+                else
+                    return;
             }
 
             try
             {
-                HardDriveImageProvider.GetImage(pathToImage);
-                Image = HardDriveImageProvider.UploadedImage;
+                Image = HardDriveImageProvider.GetImage(pathToImage);
             }
             catch (FileNotFoundException)
             {
@@ -214,12 +217,20 @@ namespace ImageViewer
             var imageBytes = new byte[bytesPerPixel * Image.PixelWidth * Image.PixelHeight];
             Image.CopyPixels(imageBytes, bytesPerPixel * Image.PixelWidth, 0);
 
-            var barChartCreator = new ColorBarChartCreator();
-            barChartCreator.CalculateImageHistogram(imageBytes, bytesPerPixel);
+            try
+            {
+                var barChartCreator = new ColorBarChartCreator();
+                barChartCreator.CalculateImageHistogram(imageBytes, bytesPerPixel);
 
-            RedColorBarChart = barChartCreator.RedBarChart.ToImageSource();
-            GreenColorBarChart = barChartCreator.GreenBarChart.ToImageSource();
-            BlueColorBarChart = barChartCreator.BlueBarChart.ToImageSource();
+                RedColorBarChart = barChartCreator.RedBarChart.ToImageSource();
+                GreenColorBarChart = barChartCreator.GreenBarChart.ToImageSource();
+                BlueColorBarChart = barChartCreator.BlueBarChart.ToImageSource();
+            }
+            catch (ArgumentException)
+            {
+                HistogramShouldBeShawn = false;
+                HistogramCreationErrorMessage = "Can not create histogram. Incorrect image data";
+            }
         }
 
         private void CleanData()
@@ -230,6 +241,7 @@ namespace ImageViewer
             RedColorBarChart = null;
             GreenColorBarChart = null;
             BlueColorBarChart = null;
+            HistogramCreationErrorMessage = string.Empty;
         }
     }
 }
