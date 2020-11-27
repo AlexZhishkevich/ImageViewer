@@ -1,9 +1,8 @@
 ﻿<Application x:Class="ImageViewer.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:ImageViewer"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:converters="clr-namespace:ImageViewer.Converters"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <converters:BoolToVisibilityConverter x:Key="VisibleIfTrueConverter"/>
     </Application.Resources>
 </Application>
