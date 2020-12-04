@@ -1,4 +1,5 @@
-﻿using ImageViewer.Domain;
+﻿using ImageViewer.Core;
+using ImageViewer.Domain;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -11,11 +12,18 @@ namespace ImageViewer.Tests
     [TestClass]
     public class MainWindowViewModelTest
     {
+        private IImageSaver _mockImageSaver;
+
+        public MainWindowViewModelTest()
+        {
+            _mockImageSaver = new Mock<IImageSaver>().Object;
+        }
+
         [TestMethod]
         public void ProcessImageFromWeb_OnLoadedImageHeightIsOne_IgnoreHistogramCreating()
         {
             // Arrange
-            var mainWindowViewModel = new MainWindowViewModel();
+            var mainWindowViewModel = new MainWindowViewModel(_mockImageSaver);
 
             var emptyImage = BitmapSource.Create(1, 1, 96, 96,
                                         PixelFormats.Indexed1,
@@ -42,7 +50,7 @@ namespace ImageViewer.Tests
         public void ProcessImageFromWeb_OnLoadedImageHasOneBytePerPixelAndHeightGreaterThanOne_ThrowsException()
         {
             // Arrange
-            var mainWindowViewModel = new MainWindowViewModel();
+            var mainWindowViewModel = new MainWindowViewModel(_mockImageSaver);
 
             var emptyImage = BitmapSource.Create(2, 2, 96, 96,
                                         PixelFormats.Indexed1,
@@ -66,7 +74,7 @@ namespace ImageViewer.Tests
         public void ProcessImageFromWeb_OnLoadedImageHasCorrectParameters_MethodHasPassed()
         {
             // Arrange
-            var mainWindowViewModel = new MainWindowViewModel();
+            var mainWindowViewModel = new MainWindowViewModel(_mockImageSaver);
 
             PixelFormat pf = PixelFormats.Bgr32;
             int width = 200;

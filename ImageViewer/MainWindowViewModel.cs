@@ -1,4 +1,5 @@
-﻿using ImageViewer.Domain;
+﻿using ImageViewer.Core;
+using ImageViewer.Domain;
 using ImageViewer.Mvvm;
 using System;
 using System.IO;
@@ -11,8 +12,12 @@ namespace ImageViewer
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        public MainWindowViewModel() 
+        private IImageSaver _imageSaver;
+
+        public MainWindowViewModel(IImageSaver imageSaver) 
         {
+            _imageSaver = imageSaver ?? throw new ArgumentNullException(nameof(imageSaver));
+
             WebImageProvider = new WebImageProvider();
             HardDriveImageProvider = new HardDriveImageProvider();
         }
@@ -20,6 +25,10 @@ namespace ImageViewer
         public ICommand ProcessImageFromWebCommand => new DelegateCommandd(ProcessImageFromWeb);
 
         public ICommand ProcessImageFromHardDriveCommand => new DelegateCommandd(ProcessImageFromHardDrive);
+
+        public ICommand SetFolderToSaveImageCommand => new DelegateCommandd(SetFolderToSaveImage);
+
+        public ICommand SaveImageCommand => new DelegateCommandd(SaveImage);
 
         public IImageProvider WebImageProvider { get; set; }
 
@@ -132,6 +141,16 @@ namespace ImageViewer
         }
         #endregion
 
+        #region DirectoryToSaveImage property
+        private string _directoryToSaveImage;
+
+        public string DirectoryToSaveImage
+        {
+            get => _directoryToSaveImage;
+            set => SetField(ref _directoryToSaveImage, value);
+        }
+        #endregion
+
         private void ProcessImageFromWeb()
         {
             CleanData();
@@ -233,9 +252,28 @@ namespace ImageViewer
             }
         }
 
+        private void SetFolderToSaveImage()
+        {
+            using (var folderBrowserDialog = new FolderBrowserDialog())
+            {
+                DialogResult result = folderBrowserDialog.ShowDialog();
+
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
+                {
+                    DirectoryToSaveImage = folderBrowserDialog.SelectedPath;
+                }
+            }
+        }
+
+        private void SaveImage()
+        {
+            _imageSaver.SaveImage(DirectoryToSaveImage, "image", Image);
+        }
+
         private void CleanData()
         {
             Image = null;
+            DirectoryToSaveImage = null;
             HardDriveImageUploadingErrorMessage = string.Empty;
             ImageUploadingErrorText = string.Empty;
             RedColorBarChart = null;
