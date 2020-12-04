@@ -66,6 +66,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
+    <Compile Include="Converters\NullObjectToVisibilityConverter.cs" />
     <Compile Include="Domain\ColorBarChartCreator.cs" />
     <Compile Include="Domain\HardDriveImageProvider.cs" />
     <Compile Include="Domain\IImageProvider.cs" />
@@ -104,6 +105,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Ninject">
+      <Version>3.3.4</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ImageViewer.Core\ImageViewer.Core.csproj">
+      <Project>{88FD928B-C6B2-4E48-A148-5FA77D225963}</Project>
+      <Name>ImageViewer.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

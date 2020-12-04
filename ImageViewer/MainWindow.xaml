@@ -6,13 +6,12 @@
         xmlns:local="clr-namespace:ImageViewer" xmlns:converters="clr-namespace:ImageViewer.Converters"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="MainWindow" Height="600" Width="900">
+        Title="MainWindow" Height="800" Width="900">
     <Window.Resources>
         <converters:BoolToVisibilityConverter x:Key="VisibleIfTrueConverter"/>
+        <converters:NullObjectToVisibilityConverter x:Key="VisibleIfNotNullConverter" NullObjectVisibility="Hidden" NotNullIbjectVisibility="Visible"/>
     </Window.Resources>
-    <Window.DataContext>
-        <local:MainWindowViewModel/>
-    </Window.DataContext>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.1*"/>
@@ -26,6 +25,8 @@
             <RowDefinition Height="0.5*"/>
             <RowDefinition Height="0.5*"/>
             <RowDefinition Height="5*"/>
+            <RowDefinition/>
+            <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
 
@@ -88,5 +89,26 @@
 
         <TextBlock Grid.Column="1" Grid.ColumnSpan="2" Foreground="Red" FontSize="14" Grid.Row="5" Text="{Binding HistogramCreationErrorMessage}" TextWrapping="Wrap" VerticalAlignment="Center"/>
 
+        <Grid Name="ExportImageContainer" Visibility="{Binding Image, Converter={StaticResource VisibleIfNotNullConverter}}" Grid.Column="1" Grid.Row="6" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Save image" FontSize="18" Grid.Column="1" HorizontalAlignment="Center"/>
+
+            <Button Grid.Row="1" Command="{Binding SetFolderToSaveImageCommand}" Margin="10" FontSize="14" Content="Select folder"/>
+
+            <TextBlock Text="{Binding DirectoryToSaveImage}" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" FontSize="14" VerticalAlignment="Center" Margin="10 0 10 0"/>
+
+            <Button Grid.Column="2" Visibility="{Binding DirectoryToSaveImage, Converter={StaticResource VisibleIfNotNullConverter}}" Command="{Binding SaveImageCommand}" Grid.Row="1" Margin="10" FontSize="14" Content="Save"/>
+
+        </Grid>
+        
     </Grid>
 </Window>
